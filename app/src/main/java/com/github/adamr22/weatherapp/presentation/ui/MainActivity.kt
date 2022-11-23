@@ -1,8 +1,10 @@
 package com.github.adamr22.weatherapp.presentation.ui
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -14,14 +16,43 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import com.github.adamr22.weatherapp.presentation.theme.ThirtyPercentBlack
 import com.github.adamr22.weatherapp.presentation.theme.UpdateCardColor
 import com.github.adamr22.weatherapp.presentation.theme.WeatherAppTheme
 import com.github.adamr22.weatherapp.presentation.theme.WeirdPurple
 
 class MainActivity : ComponentActivity() {
+
+    private val fineLocationPermission = android.Manifest.permission.ACCESS_FINE_LOCATION
+    private val coarseLocationPermission = android.Manifest.permission.ACCESS_COARSE_LOCATION
+
+    private val permissionHandler =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){}
+
+    private fun checkFineLocationPermissionGranted() = ContextCompat.checkSelfPermission(
+        this,
+        fineLocationPermission
+    ) == PackageManager.PERMISSION_GRANTED
+
+    private fun checkCoarseLocationPermissionGranted() = ContextCompat.checkSelfPermission(
+        this,
+        coarseLocationPermission
+    ) == PackageManager.PERMISSION_GRANTED
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (!checkFineLocationPermissionGranted() && !checkCoarseLocationPermissionGranted()) {
+            permissionHandler.launch(
+                arrayOf(
+                    fineLocationPermission,
+                    coarseLocationPermission
+                )
+            )
+        }
+
         setContent {
             WeatherAppTheme {
                 // A surface container using the 'background' color from the theme
