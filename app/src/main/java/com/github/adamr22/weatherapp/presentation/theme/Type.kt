@@ -1,4 +1,4 @@
-package com.github.adamr22.weatherapp.ui.theme
+package com.github.adamr22.weatherapp.presentation.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
