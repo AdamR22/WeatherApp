@@ -1,6 +1,7 @@
 package com.github.adamr22.weatherapp.presentation.ui
 
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,6 +30,8 @@ class MainActivity : ComponentActivity() {
 
     private val permissionHandler =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){}
+
+    private val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
 
     private fun checkFineLocationPermissionGranted() = ContextCompat.checkSelfPermission(
         this,
