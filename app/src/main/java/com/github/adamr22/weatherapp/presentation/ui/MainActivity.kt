@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import com.github.adamr22.weatherapp.common.Constants.coarseLocationPermission
+import com.github.adamr22.weatherapp.common.Constants.fineLocationPermission
 import com.github.adamr22.weatherapp.presentation.theme.ThirtyPercentBlack
 import com.github.adamr22.weatherapp.presentation.theme.UpdateCardColor
 import com.github.adamr22.weatherapp.presentation.theme.WeatherAppTheme
@@ -25,13 +27,8 @@ import com.github.adamr22.weatherapp.presentation.theme.WeirdPurple
 
 class MainActivity : ComponentActivity() {
 
-    private val fineLocationPermission = android.Manifest.permission.ACCESS_FINE_LOCATION
-    private val coarseLocationPermission = android.Manifest.permission.ACCESS_COARSE_LOCATION
-
     private val permissionHandler =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){}
-
-    private val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
 
     private fun checkFineLocationPermissionGranted() = ContextCompat.checkSelfPermission(
         this,
