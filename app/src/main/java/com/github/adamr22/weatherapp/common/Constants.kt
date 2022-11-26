@@ -1,6 +1,9 @@
 package com.github.adamr22.weatherapp.common
 
 object Constants {
-    val fineLocationPermission = android.Manifest.permission.ACCESS_FINE_LOCATION
-    val coarseLocationPermission = android.Manifest.permission.ACCESS_COARSE_LOCATION
+    const val fineLocationPermission = android.Manifest.permission.ACCESS_FINE_LOCATION
+    const val coarseLocationPermission = android.Manifest.permission.ACCESS_COARSE_LOCATION
+
+    //TODO Change URL
+    const val baseURL = "https://api.open-meteo.com/"
 }
