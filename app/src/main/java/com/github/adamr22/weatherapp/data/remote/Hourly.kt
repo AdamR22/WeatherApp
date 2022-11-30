@@ -1,7 +1,6 @@
-package com.github.adamr22.weatherapp.domain.remote
+package com.github.adamr22.weatherapp.data.remote
 
-data class WeeklyWeatherDataModel(
-    val day: String,
+data class Hourly(
     val pressure_msl: List<Double>,
     val relativehumidity_2m: List<Int>,
     val temperature_2m: List<Double>,
