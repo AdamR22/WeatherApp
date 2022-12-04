@@ -30,6 +30,7 @@ import com.github.adamr22.weatherapp.presentation.theme.UpdateCardColor
 import com.github.adamr22.weatherapp.presentation.theme.WeatherAppTheme
 import com.github.adamr22.weatherapp.presentation.theme.WeirdPurple
 import com.github.adamr22.weatherapp.presentation.ui.components.CurrentMetrics
+import com.github.adamr22.weatherapp.presentation.ui.components.TemperatureUpdateCard
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -90,87 +91,6 @@ class MainActivity : ComponentActivity() {
                             fontSize = 14.sp,
                         )
                     }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun TemperatureUpdateCard(
-    modifier: Modifier = Modifier,
-    data: WeatherInfo
-) {
-
-    val hourlyData: List<WeatherModel> = data.weatherData[0]!!
-    val allData = data.weatherData
-
-    var hourlyUpdates = true
-
-    Card(
-        modifier = modifier.fillMaxHeight(),
-        shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
-        backgroundColor = UpdateCardColor,
-    ) {
-        Column(
-            modifier = modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceAround,
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(4.dp),
-            ) {
-                Text(
-                    text = "Hourly Forecast",
-                    modifier = modifier.clickable {
-                        hourlyUpdates = true
-                    },
-                    fontSize = 14.sp,
-                )
-                Text(
-                    text = "Weekly Forecast",
-                    modifier = modifier.clickable {
-                        hourlyUpdates = false
-                    },
-                    fontSize = 14.sp,
-                )
-            }
-            Divider(
-                color = ThirtyPercentBlack,
-                thickness = 2.dp
-            )
-            Spacer(modifier = modifier.height(1.dp))
-            if (hourlyUpdates) {
-                LazyRow {
-                    items(hourlyData) { data ->
-                        Card(
-                            modifier = modifier
-                                .padding(5.dp)
-                                .width(60.dp)
-                                .height(146.dp),
-                            shape = RoundedCornerShape(30.dp),
-                            backgroundColor = WeirdPurple
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.SpaceEvenly
-                            ) {
-                                Text(text = data.time.format(DateTimeFormatter.ofPattern("HH:mm")))
-                                Image(
-                                    modifier = modifier.size(24.dp),
-                                    painter = painterResource(id = data.weatherType.iconRes),
-                                    contentDescription = data.weatherType.weatherDesc
-                                )
-                                Text(text = "${data.temperatureCelsius}\u2103")
-                            }
-                        }
-                    }
-                }
-            } else {
-                Box(contentAlignment = Alignment.Center) {
-                    Text(text = "Soon")
                 }
             }
         }
