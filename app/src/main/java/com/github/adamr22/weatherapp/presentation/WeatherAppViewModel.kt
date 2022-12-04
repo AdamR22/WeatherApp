@@ -1,5 +1,6 @@
 package com.github.adamr22.weatherapp.presentation
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
@@ -30,7 +31,8 @@ class WeatherAppViewModel @Inject constructor(
         locationRepository.getCurrentLocation()?.let {
 
             state = when (val result =
-                networkRepository.getWeatherData(it.latitude.toLong(), it.longitude.toLong())) {
+                networkRepository.getWeatherData(it.latitude, it.longitude)) {
+
                 is Resource.Success -> state.copy(
                     weatherInfo = result.data,
                     isLoading = false

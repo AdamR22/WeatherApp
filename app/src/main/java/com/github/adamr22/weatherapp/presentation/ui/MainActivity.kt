@@ -1,8 +1,9 @@
 package com.github.adamr22.weatherapp.presentation.ui
 
+import android.Manifest
 import android.content.pm.PackageManager
-import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.github.adamr22.weatherapp.common.Constants.coarseLocationPermission
 import com.github.adamr22.weatherapp.common.Constants.fineLocationPermission
+import com.github.adamr22.weatherapp.domain.models.WeatherInfo
 import com.github.adamr22.weatherapp.presentation.WeatherAppViewModel
 import com.github.adamr22.weatherapp.presentation.theme.ThirtyPercentBlack
 import com.github.adamr22.weatherapp.presentation.theme.UpdateCardColor
@@ -31,35 +33,26 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    val viewModel by viewModels<WeatherAppViewModel>()
+    private val viewModel by viewModels<WeatherAppViewModel>()
+
+    private val TAG = "MainActivity"
 
     private val permissionHandler =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
             viewModel.loadData()
         }
-
-    private fun checkFineLocationPermissionGranted() = ContextCompat.checkSelfPermission(
-        this,
-        fineLocationPermission
-    ) == PackageManager.PERMISSION_GRANTED
-
-    private fun checkCoarseLocationPermissionGranted() = ContextCompat.checkSelfPermission(
-        this,
-        coarseLocationPermission
-    ) == PackageManager.PERMISSION_GRANTED
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (!checkFineLocationPermissionGranted() && !checkCoarseLocationPermissionGranted()) {
-            permissionHandler.launch(
-                arrayOf(
-                    fineLocationPermission,
-                    coarseLocationPermission
-                )
+        Log.d(TAG, "onCreate: ${viewModel.state}")
+        permissionHandler.launch(
+            arrayOf(
+                fineLocationPermission,
+                coarseLocationPermission
             )
-        }
+        )
 
         setContent {
             WeatherAppTheme {
@@ -68,11 +61,34 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+
+                    if (viewModel.state.error != null) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Text(
+                                text = viewModel.state.error!!,
+                                fontSize = 14.sp,
+                            )
+                        }
+                    }
+
+                    if (viewModel.state.isLoading) {
+                        Box(contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator()
+                        }
+
+                    }
+
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        CurrentMetrics()
-                        TemperatureUpdateCard()
+
+                        viewModel.state.weatherInfo?.let {
+                            CurrentMetrics(data = it)
+                            TemperatureUpdateCard()
+                        } ?: Text(
+                            text = viewModel.state.error!!,
+                            fontSize = 14.sp,
+                        )
                     }
                 }
             }
@@ -82,7 +98,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun CurrentMetrics(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    data: WeatherInfo
 ) {
     Spacer(modifier.height(30.dp))
     Column(
@@ -92,23 +109,17 @@ fun CurrentMetrics(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Nairobi",
-            fontSize = 34.sp,
-            lineHeight = 41.sp,
-            letterSpacing = .37.sp,
+            text = "${data.currentData?.temperatureCelsius}\u2103",
+            fontSize = 50.sp,
         )
-        Text(
-            text = "19\u2103",
-            fontSize = 96.sp,
-            lineHeight = 70.sp,
-            letterSpacing = .37.sp,
-        )
-        Text(
-            text = "Mostly Clear",
-            fontSize = 20.sp,
-            lineHeight = 24.sp,
-            letterSpacing = .38.sp,
-        )
+        data.currentData?.weatherType?.let {
+            Text(
+                text = it.weatherDesc,
+                fontSize = 20.sp,
+                lineHeight = 24.sp,
+                letterSpacing = .38.sp,
+            )
+        }
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
             Text(
                 text = "H:24\u00B0",
