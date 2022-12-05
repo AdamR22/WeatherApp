@@ -1,6 +1,5 @@
 package com.github.adamr22.weatherapp.presentation.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -16,7 +15,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,9 +23,7 @@ import com.github.adamr22.weatherapp.domain.models.WeatherInfo
 import com.github.adamr22.weatherapp.domain.models.WeatherModel
 import com.github.adamr22.weatherapp.presentation.theme.ThirtyPercentBlack
 import com.github.adamr22.weatherapp.presentation.theme.UpdateCardColor
-import com.github.adamr22.weatherapp.presentation.theme.WeirdPurple
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun TemperatureUpdateCard(
@@ -84,27 +80,7 @@ fun TemperatureUpdateCard(
                 if (hourlyUpdates.value) {
                     LazyRow {
                         items(hourlyData) { data ->
-                            Card(
-                                modifier = modifier
-                                    .padding(5.dp)
-                                    .width(60.dp)
-                                    .height(146.dp),
-                                shape = RoundedCornerShape(30.dp),
-                                backgroundColor = WeirdPurple
-                            ) {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.SpaceEvenly
-                                ) {
-                                    Text(text = data.time.format(DateTimeFormatter.ofPattern("HH:mm")))
-                                    Image(
-                                        modifier = modifier.size(24.dp),
-                                        painter = painterResource(id = data.weatherType.iconRes),
-                                        contentDescription = data.weatherType.weatherDesc
-                                    )
-                                    Text(text = "${data.temperatureCelsius}\u2103")
-                                }
-                            }
+                            HourlyWeatherCard(data = data)
                         }
                     }
                 } else {
@@ -112,38 +88,11 @@ fun TemperatureUpdateCard(
                         Column {
                             Text(
                                 text = if (list[index].time.dayOfWeek.name == LocalDateTime.now().dayOfWeek.name
-                                )
-                                    stringResource(id = R.string.today) else list[index].time.dayOfWeek.name
+                                ) stringResource(id = R.string.today) else list[index].time.dayOfWeek.name
                             )
                             LazyRow {
                                 items(list) { data ->
-                                    Card(
-                                        modifier = modifier
-                                            .padding(5.dp)
-                                            .width(60.dp)
-                                            .height(146.dp),
-                                        shape = RoundedCornerShape(30.dp),
-                                        backgroundColor = WeirdPurple
-                                    ) {
-                                        Column(
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.SpaceEvenly
-                                        ) {
-                                            Text(
-                                                text = data.time.format(
-                                                    DateTimeFormatter.ofPattern(
-                                                        "HH:mm"
-                                                    )
-                                                )
-                                            )
-                                            Image(
-                                                modifier = modifier.size(24.dp),
-                                                painter = painterResource(id = data.weatherType.iconRes),
-                                                contentDescription = data.weatherType.weatherDesc
-                                            )
-                                            Text(text = "${data.temperatureCelsius}\u2103")
-                                        }
-                                    }
+                                    HourlyWeatherCard(data = data)
                                 }
                             }
                         }
