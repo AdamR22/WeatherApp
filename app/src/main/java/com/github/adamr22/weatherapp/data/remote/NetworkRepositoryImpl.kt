@@ -9,7 +9,7 @@ import javax.inject.Inject
 class NetworkRepositoryImpl @Inject constructor(
     private val api: NetworkService
 ) : NetworkRepository {
-    override suspend fun getWeatherData(lat: Long, lon: Long): Resource<WeatherInfo> {
+    override suspend fun getWeatherData(lat: Double, lon: Double): Resource<WeatherInfo> {
         return try {
             Resource.Success(
                 data = api.getWeatherInfo(lat, lon).toWeatherInfo()

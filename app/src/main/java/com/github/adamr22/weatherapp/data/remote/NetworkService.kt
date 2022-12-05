@@ -7,8 +7,8 @@ interface NetworkService {
 
     @GET("v1/forecast?hourly=temperature_2m,relativehumidity_2m,weathercode,pressure_msl,windspeed_10m")
     suspend fun getWeatherInfo(
-        @Query("latitude") lat: Long,
-        @Query("longitude") lon: Long
+        @Query("latitude") lat: Double,
+        @Query("longitude") lon: Double
     ): NetworkModel
 
 }
