@@ -6,10 +6,17 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
+import android.os.Looper
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.github.adamr22.weatherapp.common.Constants
 import com.github.adamr22.weatherapp.domain.location.LocationRepository
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
@@ -38,6 +45,11 @@ class LocationRepositoryImpl @Inject constructor(
         Constants.coarseLocationPermission
     ) == PackageManager.PERMISSION_GRANTED
 
+    private val locationRequest: LocationRequest = LocationRequest().apply {
+        this.interval = 3600 * 1000
+        this.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+    }
+
 
     @SuppressLint("MissingPermission")
     override suspend fun getCurrentLocation(): Location? {
@@ -47,26 +59,16 @@ class LocationRepositoryImpl @Inject constructor(
         }
 
         return suspendCancellableCoroutine { coroutineWithValue ->
-            locationProviderClient.lastLocation.apply {
-                if (isComplete) {
-                    if (isSuccessful) {
-                        coroutineWithValue.resume(result, null)
-                    } else {
-                        coroutineWithValue.resume(null, null)
+            locationProviderClient.requestLocationUpdates(
+                locationRequest,
+                object : LocationCallback() {
+                    override fun onLocationResult(result: LocationResult) {
+                        coroutineWithValue.resume(result.locations[0], null)
                     }
-
-                    return@suspendCancellableCoroutine
-                }
-                addOnCanceledListener {
-                    coroutineWithValue.cancel()
-                }
-                addOnSuccessListener {
-                    coroutineWithValue.resume(it, null)
-                }
-                addOnFailureListener {
-                    coroutineWithValue.resume(null, null)
-                }
-            }
+                },
+                Looper.getMainLooper()
+            )
+            return@suspendCancellableCoroutine
         }
     }
 }
