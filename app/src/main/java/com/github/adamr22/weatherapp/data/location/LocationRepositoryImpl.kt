@@ -8,9 +8,6 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.Looper
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
 import com.github.adamr22.weatherapp.common.Constants
 import com.github.adamr22.weatherapp.domain.location.LocationRepository
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -45,6 +42,7 @@ class LocationRepositoryImpl @Inject constructor(
         Constants.coarseLocationPermission
     ) == PackageManager.PERMISSION_GRANTED
 
+    @Suppress("DEPRECATION")
     private val locationRequest: LocationRequest = LocationRequest().apply {
         this.interval = 3600 * 1000
         this.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
