@@ -7,4 +7,7 @@
     <string name="wind_speed_unit">km/h</string>
     <string name="percentage_sign">\u0025</string>
     <string name="location_permission_error">Ensure location permission is enabled</string>
+    <string name="hourly_forecast">Hourly Forecast</string>
+    <string name="weekly_forecast">Weekly Forecast</string>
+    <string name="today">TODAY</string>
 </resources>
